@@ -6,3 +6,15 @@
   [headers.values]
     Access-Control-Allow-Origin = "*"
     Cache-Control = "no-cache"
+
+[[redirects]]
+  from = "/data/pack_data.json"
+  to = "https://github.com/gunjanbarevarvc-ux/mff-dashboard/releases/download/data-latest/pack_data.json"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/data/order_data.json"
+  to = "https://github.com/gunjanbarevarvc-ux/mff-dashboard/releases/download/data-latest/order_data.json"
+  status = 200
+  force = true
