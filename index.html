@@ -547,10 +547,8 @@ async function init(){
     const t=Date.now();
     const N=6;
     function mergeChunks(chunks){
-      if(!chunks||!chunks.length)return{};
-      const merged={};
-      for(const key of Object.keys(chunks[0])){merged[key]=[].concat(...chunks.map(c=>c[key]||[]));}
-      return merged;
+      if(!chunks||!chunks.length)return{cols:[],rows:[]};
+      return{cols:chunks[0].cols,rows:[].concat(...chunks.map(c=>c.rows||[]))};
     }
     const packChunkPromises  = Array.from({length:N},(_,i)=>fetch(`data/pack_data_${i+1}.json?t=${t}`).then(r=>{if(!r.ok)throw new Error(`pack chunk ${i+1} HTTP ${r.status}`);return r.json();}));
     const orderChunkPromises = Array.from({length:N},(_,i)=>fetch(`data/order_data_${i+1}.json?t=${t}`).then(r=>{if(!r.ok)throw new Error(`order chunk ${i+1} HTTP ${r.status}`);return r.json();}));
