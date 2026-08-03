@@ -543,17 +543,22 @@ function colsToRows(data){
 
 async function init(){
   try{
-    // Fetch 3 separate files in parallel (avoids single large file / git push timeout)
+    // Load data as 6 chunks per dataset (each ~14 MB, under GitHub API 25 MB limit)
     const t=Date.now();
-    const [packRes,orderRes,sumRes]=await Promise.all([
-      fetch('data/pack_data.json?t='+t),
-      fetch('data/order_data.json?t='+t),
-      fetch('data/summary.json?t='+t),
-    ]);
-    if(!packRes.ok)throw new Error('pack_data.json HTTP '+packRes.status);
-    if(!orderRes.ok)throw new Error('order_data.json HTTP '+orderRes.status);
+    const N=6;
+    function mergeChunks(chunks){
+      if(!chunks||!chunks.length)return{};
+      const merged={};
+      for(const key of Object.keys(chunks[0])){merged[key]=[].concat(...chunks.map(c=>c[key]||[]));}
+      return merged;
+    }
+    const packChunkPromises  = Array.from({length:N},(_,i)=>fetch(`data/pack_data_${i+1}.json?t=${t}`).then(r=>{if(!r.ok)throw new Error(`pack chunk ${i+1} HTTP ${r.status}`);return r.json();}));
+    const orderChunkPromises = Array.from({length:N},(_,i)=>fetch(`data/order_data_${i+1}.json?t=${t}`).then(r=>{if(!r.ok)throw new Error(`order chunk ${i+1} HTTP ${r.status}`);return r.json();}));
+    const sumRes=await fetch('data/summary.json?t='+t);
     if(!sumRes.ok)throw new Error('summary.json HTTP '+sumRes.status);
-    const [packData,orderData,sumData]=await Promise.all([packRes.json(),orderRes.json(),sumRes.json()]);
+    const [packChunks,orderChunks,sumData]=await Promise.all([Promise.all(packChunkPromises),Promise.all(orderChunkPromises),sumRes.json()]);
+    const packData=mergeChunks(packChunks);
+    const orderData=mergeChunks(orderChunks);
     PACK_ROWS=colsToRows(packData);ORDER_ROWS=colsToRows(orderData);SUMMARY=sumData.summary||{};
     const d={updated:sumData.updated||''};
     document.getElementById('last-refreshed-ts').textContent=d.updated||'Unknown';
