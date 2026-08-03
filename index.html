@@ -546,8 +546,8 @@ async function init(){
     // Fetch 3 separate files in parallel (avoids single large file / git push timeout)
     const t=Date.now();
     const [packRes,orderRes,sumRes]=await Promise.all([
-      fetch('https://github.com/gunjanbarevarvc-ux/mff-dashboard/releases/download/data-latest/pack_data.json?t='+t),
-      fetch('https://github.com/gunjanbarevarvc-ux/mff-dashboard/releases/download/data-latest/order_data.json?t='+t),
+      fetch('data/pack_data.json?t='+t),
+      fetch('data/order_data.json?t='+t),
       fetch('data/summary.json?t='+t),
     ]);
     if(!packRes.ok)throw new Error('pack_data.json HTTP '+packRes.status);
