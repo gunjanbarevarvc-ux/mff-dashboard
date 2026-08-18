@@ -193,6 +193,7 @@ tr:last-child td{border-bottom:none;}
           <th class="num-right">Fulfilment Cap.</th>
           <th class="num-right">Current Cap</th>
           <th class="num-right">DW %</th><th class="num-right">GMV/Day (₹)</th><th class="num-right">DRR</th>
+          <th class="num-right" title="Current Cap ÷ DRR">X Finder</th>
         </tr></thead><tbody id="pack-tbody"></tbody></table></div>
       </div>
       <div class="pagination-bar" id="pack-pagination"></div>
@@ -239,6 +240,7 @@ tr:last-child td{border-bottom:none;}
           <th class="num-right">Fulfilment Cap.</th>
           <th class="num-right">Current Cap</th>
           <th class="num-right">DW %</th><th class="num-right">GMV/Day (₹)</th><th class="num-right">DRR</th>
+          <th class="num-right" title="Current Cap ÷ DRR">X Finder</th>
         </tr></thead><tbody id="order-tbody"></tbody></table></div>
       </div>
       <div class="pagination-bar" id="order-pagination"></div>
@@ -430,6 +432,7 @@ function renderTable(prefix,rows){
     <td class="num-right">${fmtDW(r.dw)}</td>
     <td class="num-right">${fmtCr(r.gmv_pd)}</td>
     <td class="num-right"><strong style="color:var(--blue);">${fmt(r.drr)}</strong></td>
+    <td class="num-right"><strong style="color:${(r.drr>0&&r.current_cap/r.drr>=10)?'#e53':'var(--text)'};">${r.drr>0?(r.current_cap/r.drr).toFixed(1)+'x':'—'}</strong></td>
   </tr>`).join('');
 }
 
